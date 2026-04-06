@@ -1,106 +1,113 @@
-# Menorca1 - App de MediaCMS
+# menorca1-app
 
-App móvil para Android e iOS que consume la API de MediaCMS desde **media.menorca1.com**.
+App móvil para Android e iOS conectada a una instalación de [MediaCMS](https://mediacms.io).
 
 ## Características
 
-✅ **Exploración de videos** - Lista todos los videos disponibles  
-✅ **Búsqueda** - Busca videos por título y descripción  
-✅ **Categorías** - Filtrado por categorías  
-✅ **Reproducción** - Player de video integrado con controles  
-✅ **Infinite scroll** - Carga más videos al llegar al final  
-✅ **Actualización** - Pull to refresh para recargar datos  
+- Exploración de vídeos con infinite scroll y pull to refresh
+- Búsqueda por texto y filtrado por categorías
+- Reproducción de vídeo y audio (HLS + MP4)
+- Login / Logout con token de autenticación
+- Subida de vídeos y audio
+- Perfil de usuario con estadísticas
+- Historial de vídeos vistos (sincronizado con el servidor)
+- Likes, dislikes y comentarios
+- Vídeos relacionados, categorías y tags
 
-## Stack Tecnológico
+## Stack
 
-- **Expo** - Framework React Native
-- **React Router** - Navegación
-- **Axios** - Cliente HTTP
-- **expo-av** - Reproducción de video
-- **TypeScript** - Type safety
+- Expo SDK 54 / React Native
+- Expo Router (navegación por ficheros)
+- expo-video (reproducción HLS)
+- Axios (cliente API)
+- AsyncStorage (persistencia del token)
+- TypeScript
 
-## Instalación y Configuración
+## Instalación y desarrollo
 
-### 1. Instalar dependencias
+### 1. Clonar el repositorio
+
+```bash
+git clone https://github.com/Rocollxyz/menorca1-app
+cd menorca1-app
+```
+
+### 2. Configurar el servidor
+
+```bash
+cp .env.example .env
+```
+
+Edita `.env` y pon la URL de tu servidor MediaCMS:
+
+```
+EXPO_PUBLIC_API_BASE=https://tu-servidor-mediacms.com
+```
+
+### 3. Instalar dependencias
 
 ```bash
 npm install
 ```
 
-### 2. Iniciar en desarrollo
+### 4. Iniciar en desarrollo
 
 ```bash
-npm start
+npx expo start
 ```
 
-### 3. Abrir en dispositivo
+Escanea el QR con **Expo Go** en tu móvil (Android o iOS).
 
-- **iOS**: Presiona `i` para abrir en simulador (requiere macOS)
-- **Android**: Presiona `a` para abrir en emulador
-- **Expo Go**: Escanea el QR con tu teléfono
+## Publicar en las tiendas
 
-## Estructura del Proyecto
+### Requisitos previos
+
+- Cuenta en [expo.dev](https://expo.dev)
+- `eas-cli` instalado: `npm install -g eas-cli`
+- Cuenta Google Play Developer (Android, pago único $25)
+- Cuenta Apple Developer (iOS, $99/año)
+
+### Build de producción
+
+```bash
+npx expo login
+eas build:configure
+```
+
+**Android (Play Store):**
+```bash
+eas build --platform android --profile production
+```
+
+**iOS (App Store):**
+```bash
+eas build --platform ios --profile production
+```
+
+Los ficheros `.aab` (Android) e `.ipa` (iOS) se generan en la nube y se descargan desde [expo.dev](https://expo.dev).
+
+## Estructura del proyecto
 
 ```
 app/
 ├── (tabs)/
-│   ├── index.tsx        # Pantalla principal de videos
-│   ├── two.tsx          # Pantalla de búsqueda y categorías
-│   └── _layout.tsx      # Layout de tabs
+│   ├── index.tsx       # Inicio — listado de vídeos
+│   ├── search.tsx      # Búsqueda y categorías
+│   ├── upload.tsx      # Subida de contenido
+│   ├── profile.tsx     # Perfil, historial y logout
+│   └── _layout.tsx     # Layout de tabs
+├── player.tsx          # Reproductor de vídeo/audio
+├── login.tsx           # Pantalla de login
+└── _layout.tsx         # Layout raíz
 components/
-├── VideoCard.tsx        # Tarjeta de video
-└── VideoPlayer.tsx      # Player de video
+└── MediaCard.tsx       # Tarjeta de vídeo
+context/
+└── AuthContext.tsx     # Estado global de autenticación
 services/
-└── mediacms-api.ts      # Cliente API de MediaCMS
-```
-
-## API de MediaCMS
-
-La app se conecta a: `https://media.menorca1.com/api`
-
-### Endpoints principales
-
-- `GET /videos/` - Listar videos
-- `GET /videos/{id}/` - Detalles de video
-- `GET /categories/` - Listar categorías
-- `GET /videos/search/` - Buscar videos
-- `POST /videos/{id}/views/` - Registrar visualización
-
-## Próximos pasos
-
-- [ ] Pantalla de detalles del video
-- [ ] Historial de videos vistos
-- [ ] Favoritos
-- [ ] Reproducción en segundo plano
-- [ ] Descarga de videos
-- [ ] Soporte para subtítulos
-- [ ] Dark mode mejorado
-
-## Desarrollo
-
-Para trabajar con Claude/IA en este proyecto:
-
-1. **Exploración**: Pide que explore la estructura del proyecto
-2. **Nuevas funciones**: Describe qué quieres agregar
-3. **Debugging**: Comparte logs de error
-4. **Refactoring**: Solicita mejorar código existente
-
-## Comandos útiles
-
-```bash
-npm start              # Inicia servidor Expo
-npm run android        # Abre en emulador Android
-npm run ios            # Abre en simulador iOS
-npm run web            # Abre en navegador
-npm run lint           # Ejecuta ESLint
+└── mediacms-api.ts     # Cliente API de MediaCMS
 ```
 
 ## Notas
 
-- La app usa el endpoint de API de MediaCMS. Verifica que `media.menorca1.com` esté accesible.
-- Los videos se cargan bajo demanda con paginación.
-- El cliente HTTP está configurado con timeout de 10 segundos.
-
----
-
-**Creado con ❤️ usando Expo**
+- Los usuarios deben estar aprobados en el panel de administración de MediaCMS para poder iniciar sesión.
+- El `.env` nunca se sube a GitHub — usa `.env.example` como plantilla.
